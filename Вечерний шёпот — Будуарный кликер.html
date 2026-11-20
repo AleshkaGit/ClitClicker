@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Вечерний шёпот</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================================================
+           ТЁПЛАЯ БУДУАРНАЯ ПАЛИТРА И СТРОГАЯ СТАБИЛЬНОСТЬ ВЁРСТКИ
+           ========================================================================= */
+        :root {
+            --bg-espresso: #140b0e;
+            --bg-mahogany: #211016;
+            --surface-card: #28141c;
+            --surface-elevated: #321923;
+            --text-cream: #f5ebe6;
+            --text-muted: #c7afa8;
+            --rose-warm: #c9647b;
+            --rose-deep: #8f2d47;
+            --amber-brass: #d4a359;
+            --border-hairline: rgba(245, 235, 230, 0.11);
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-espresso);
+            color: var(--text-cream);
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Тонкая фактура бумаги/льна без неоновых свечений */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.035;
+            background-image: radial-gradient(rgba(245, 235, 230, 0.8) 0.6px, transparent 0.6px);
+            background-size: 4px 4px;
+        }
+
+        .font-editorial {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+        }
+
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Жёсткое предотвращение сдвига от длинных/коротких строк */
+        .line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Мягкие скроллбары */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(20, 11, 14, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 163, 89, 0.28);
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 163, 89, 0.45);
+        }
+
+        /* Спокойное дыхание центрального объекта */
+        @keyframes slowBreathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.028); }
+        }
+
+        @keyframes breathCatch {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        @keyframes pulseRipple {
+            0% { transform: scale(0.75); opacity: 0.55; }
+            100% { transform: scale(1.45); opacity: 0; }
+        }
+
+        @keyframes floatNumber {
+            0% { opacity: 1; transform: translate(-50%, -30%) scale(0.95); }
+            25% { opacity: 1; transform: translate(-50%, -65%) scale(1.06); }
+            100% { opacity: 0; transform: translate(-50%, -135%) scale(0.98); }
+        }
+
+        .sculpt-breathe {
+            animation: slowBreathe 3.8s ease-in-out infinite;
+        }
+
+        .sculpt-winded {
+            animation: breathCatch 0.32s ease-in-out infinite;
+        }
+
+        .sculpt-press {
+            transform: scale(0.945) !important;
+            transition: transform 70ms ease-out;
+        }
+
+        .ripple-ring {
+            position: absolute;
+            border-radius: 9999px;
+            border: 1px solid rgba(212, 163, 89, 0.55);
+            pointer-events: none;
+            animation: pulseRipple 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .pop-delta {
+            position: fixed;
+            pointer-events: none;
+            z-index: 60;
+            font-weight: 700;
+            animation: floatNumber 0.92s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .boudoir-surface {
+            background: linear-gradient(170deg, rgba(40, 20, 28, 0.94) 0%, rgba(25, 12, 17, 0.97) 100%);
+            border: 1px solid var(--border-hairline);
+            box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.72);
+        }
+
+        .shop-item-card {
+            min-height: 82px;
+            background: rgba(50, 25, 35, 0.62);
+            border: 1px solid rgba(245, 235, 230, 0.09);
+            transition: background-color 140ms ease, border-color 140ms ease;
+        }
+
+        .shop-item-card:hover:not(.is-locked) {
+            background: rgba(66, 33, 46, 0.82);
+            border-color: rgba(212, 163, 89, 0.36);
+        }
+
+        .shop-item-card.is-locked {
+            opacity: 0.46;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col lg:h-screen lg:overflow-hidden">
+
+    <!-- Уведомления (тосты с фиксированной шириной и обрезкой) -->
+    <div id="toastStack" class="fixed bottom-16 lg:bottom-5 right-4 z-50 flex flex-col gap-2 w-[calc(100vw-2rem)] max-w-sm pointer-events-none"></div>
+
+    <!-- =========================================================================
+         ВЕРХНЯЯ ПАНЕЛЬ (ФИКСИРОВАННАЯ ВЫСОТА, ТАБЛИЧНЫЕ ЦИФРЫ)
+         ========================================================================= -->
+    <header class="boudoir-surface shrink-0 z-30 px-4 py-2.5 border-b border-[var(--border-hairline)]">
+        <div class="max-w-[1440px] mx-auto flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5">
+            <!-- Название -->
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-xl bg-[#3a1b27] border border-[#d4a359]/35 flex items-center justify-center text-[#e6be7d] font-editorial italic text-xl shrink-0">
+                    в
+                </div>
+                <div class="min-w-0">
+                    <h1 class="font-editorial text-xl sm:text-2xl font-bold leading-none text-[#f5ebe6] truncate">
+                        Вечерний шёпот
+                    </h1>
+                    <p class="text-[11px] text-[#c7afa8] truncate mt-0.5">
+                        Близость, темп и тайные желания
+                    </p>
+                </div>
+            </div>
+
+            <!-- Основные счётчики (фиксированные колонки, без скачков ширины) -->
+            <div class="order-3 lg:order-2 w-full lg:w-auto grid grid-cols-3 gap-2 sm:gap-5 bg-[#160b0f]/80 border border-[var(--border-hairline)] rounded-xl px-3 py-1.5 shrink-0">
+                <div class="min-w-[82px]">
+                    <div class="text-[10px] uppercase tracking-wider text-[#c7afa8]">Тепло</div>
+                    <div id="uiPleasure" class="text-sm sm:text-base font-extrabold text-[#f2c6cf] tabular-nums truncate">0</div>
+                </div>
+                <div class="min-w-[82px] border-l border-[var(--border-hairline)] pl-2 sm:pl-4">
+                    <div class="text-[10px] uppercase tracking-wider text-[#c7afa8]">В секунду</div>
+                    <div id="uiPps" class="text-sm sm:text-base font-bold text-[#f5ebe6] tabular-nums truncate">0</div>
+                </div>
+                <div class="min-w-[82px] border-l border-[var(--border-hairline)] pl-2 sm:pl-4">
+                    <div class="text-[10px] uppercase tracking-wider text-[#d4a359]">Искры близости</div>
+                    <div id="uiSparks" class="text-sm sm:text-base font-extrabold text-[#e6be7d] tabular-nums truncate">0</div>
+                </div>
+            </div>
+
+            <!-- Навигация по разделам и утилитам -->
+            <div class="order-2 lg:order-3 flex items-center gap-1.5 shrink-0">
+                <button id="openDiaryBtn" class="h-9 px-3 rounded-xl bg-[#341924] hover:bg-[#43202e] border border-[var(--border-hairline)] text-xs font-semibold text-[#f5ebe6] flex items-center gap-1.5 transition shrink-0">
+                    <span>Дневник</span>
+                    <span id="diaryCounter" class="text-[11px] text-[#d4a359] tabular-nums">0/10</span>
+                </button>
+                <button id="openAchBtn" class="h-9 px-3 rounded-xl bg-[#341924] hover:bg-[#43202e] border border-[var(--border-hairline)] text-xs font-semibold text-[#f5ebe6] flex items-center gap-1.5 transition shrink-0">
+                    <span>Трофеи</span>
+                    <span id="achCounter" class="text-[11px] text-[#e6be7d] tabular-nums">0/50</span>
+                </button>
+                <button id="openSaveBtn" class="h-9 px-2.5 rounded-xl bg-[#2a141d] hover:bg-[#381b27] border border-[var(--border-hairline)] text-xs font-medium text-[#c7afa8] hover:text-[#f5ebe6] transition shrink-0" title="Досье и сохранение">
+                    Досье
+                </button>
+                <button id="toggleSoundBtn" class="w-9 h-9 rounded-xl bg-[#2a141d] hover:bg-[#381b27] border border-[var(--border-hairline)] text-xs font-semibold text-[#d4a359] flex items-center justify-center transition shrink-0" title="Звук выключен по умолчанию">
+                    <span id="soundStatusLabel">Звук: нет</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- =========================================================================
+         ОСНОВНОЕ ПОЛЕ: ЛЕВАЯ КОЛОНКА (ЛАСКА, НАКАЛ, КАПРИЗ) И ПРАВАЯ (ПРОКАЧКИ)
+         ========================================================================= -->
+    <main class="flex-1 max-w-[1440px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-3 p-3 lg:overflow-hidden pb-16 lg:pb-3">
+
+        <!-- ЛЕВАЯ КОЛОНКА -->
+        <section id="leftColumn" class="lg:col-span-5 xl:col-span-4 boudoir-surface rounded-2xl p-4 flex flex-col justify-between gap-3 relative lg:overflow-hidden">
+
+            <!-- Шкала Накала и Зоны наслаждения -->
+            <div class="space-y-2.5 shrink-0">
+                <div class="bg-[#170b0f]/85 border border-[var(--border-hairline)] rounded-xl p-3">
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                        <span id="tensionTitle" class="text-xs font-bold text-[#f5ebe6] truncate">Накал: спокойное дыхание</span>
+                        <span id="tensionValue" class="text-xs font-bold text-[#e6be7d] tabular-nums shrink-0">0%</span>
+                    </div>
+
+                    <!-- Полоса накала с отмеченной зоной наслаждения (55% - 82%) -->
+                    <div class="relative w-full h-3 rounded-full bg-[#2c151e] overflow-hidden border border-white/5">
+                        <!-- Зона наслаждения (сладкая середина) -->
+                        <div class="absolute top-0 bottom-0 left-[55%] w-[27%] bg-[#d4a359]/25 border-x border-[#e6be7d]/50 z-10 pointer-events-none" title="Зона наслаждения: множитель x1.6"></div>
+                        <!-- Текущий накал -->
+                        <div id="tensionFill" class="h-full rounded-full bg-gradient-to-r from-[#8f2d47] via-[#c9647b] to-[#d4a359] transition-[width] duration-75" style="width: 0%"></div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-[11px] text-[#c7afa8] mt-1.5">
+                        <span id="sweetSpotBadge" class="truncate">В зоне 55–82% тепло идёт быстрее</span>
+                        <span id="clickMultBadge" class="font-bold text-[#f2c6cf] tabular-nums shrink-0">Сила: 0</span>
+                    </div>
+                </div>
+
+                <!-- «Каприз момента» — живое мини-испытание -->
+                <div id="cravingCard" class="bg-[#1b0d12]/90 border border-[#d4a359]/25 rounded-xl px-3 py-2 flex items-center justify-between gap-3 min-h-[58px]">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] uppercase tracking-wider font-bold text-[#d4a359] shrink-0">Каприз момента</span>
+                            <span id="cravingTimer" class="text-[11px] text-[#c7afa8] tabular-nums shrink-0"></span>
+                        </div>
+                        <p id="cravingText" class="text-xs text-[#f5ebe6] line-clamp-1 mt-0.5">Сделай 12 прикосновений в ровном темпе</p>
+                        <div class="w-full h-1 bg-[#2c151e] rounded-full overflow-hidden mt-1.5">
+                            <div id="cravingBar" class="h-full bg-[#d4a359] transition-[width] duration-150" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <button id="cravingClaimBtn" class="hidden px-2.5 py-1.5 rounded-lg bg-[#d4a359] text-[#190b0f] font-extrabold text-xs shrink-0 hover:bg-[#e5b86e] transition">
+                        Взять
+                    </button>
+                </div>
+            </div>
+
+            <!-- Центральный тактильный объект (органическая скульптурная форма) -->
+            <div class="flex-1 flex flex-col items-center justify-center py-2 min-h-[250px] relative">
+                <div id="touchPad" class="relative w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center cursor-pointer touch-manipulation">
+                    <!-- Мягкое тёплое пятно под скульптурой -->
+                    <div class="absolute inset-4 rounded-full bg-[#8f2d47]/20 blur-2xl pointer-events-none"></div>
+
+                    <svg id="sculptSvg" viewBox="0 0 240 240" class="w-full h-full sculpt-breathe overflow-visible">
+                        <defs>
+                            <radialGradient id="mahoganyShell" cx="48%" cy="42%" r="55%">
+                                <stop offset="0%" stop-color="#a83854"/>
+                                <stop offset="60%" stop-color="#5c1b2d"/>
+                                <stop offset="100%" stop-color="#290b14"/>
+                            </radialGradient>
+                            <radialGradient id="innerSilk" cx="50%" cy="45%" r="50%">
+                                <stop offset="0%" stop-color="#e38b9e"/>
+                                <stop offset="58%" stop-color="#9e324d"/>
+                                <stop offset="100%" stop-color="#471322"/>
+                            </radialGradient>
+                            <radialGradient id="warmPearl" cx="38%" cy="35%" r="60%">
+                                <stop offset="0%" stop-color="#fff3ec"/>
+                                <stop offset="35%" stop-color="#f0a8b8"/>
+                                <stop offset="78%" stop-color="#b83b59"/>
+                                <stop offset="100%" stop-color="#5e172a"/>
+                            </radialGradient>
+                        </defs>
+
+                        <!-- Внешний плавный контур -->
+                        <path d="M120 18 C172 34, 204 88, 194 148 C184 198, 150 222, 120 224 C90 222, 56 198, 46 148 C36 88, 68 34, 120 18 Z"
+                              fill="url(#mahoganyShell)" stroke="#e38b9e" stroke-opacity="0.28" stroke-width="1.2"/>
+
+                        <!-- Внутренняя складка -->
+                        <path d="M120 36 C156 54, 176 98, 167 146 C158 184, 138 203, 120 205 C102 203, 82 184, 73 146 C64 98, 84 54, 120 36 Z"
+                              fill="url(#innerSilk)" stroke="#f5ebe6" stroke-opacity="0.22" stroke-width="1"/>
+
+                        <!-- Нежный изгиб сверху -->
+                        <path d="M92 80 C102 54, 138 54, 148 80 C136 68, 104 68, 92 80 Z"
+                              fill="#f5ebe6" fill-opacity="0.28"/>
+
+                        <!-- Центральная точка ласки -->
+                        <ellipse id="coreSpot" cx="120" cy="92" rx="19" ry="23" fill="url(#warmPearl)" stroke="#fff3ec" stroke-opacity="0.45" stroke-width="1"/>
+                        <ellipse cx="114" cy="84" rx="5" ry="7.5" transform="rotate(-18 114 84)" fill="#ffffff" fill-opacity="0.65"/>
+
+                        <!-- Нижняя линия -->
+                        <path d="M120 120 C123 146, 123 172, 120 194 C117 172, 117 146, 120 120 Z"
+                              fill="#240810" fill-opacity="0.55"/>
+                    </svg>
+                </div>
+                <p id="holdStatusNote" class="text-[11px] text-[#c7afa8] mt-1 text-center h-4">
+                    Коснись центра — или удерживай при открытом таланте
+                </p>
+            </div>
+
+            <!-- Нижний блок: Разрядка / Опыт близости -->
+            <div class="bg-[#170b0f]/90 border border-[#d4a359]/25 rounded-xl p-3 shrink-0">
+                <div class="flex items-center justify-between text-xs mb-1.5">
+                    <span class="font-semibold text-[#f5ebe6]">Пик близости</span>
+                    <span id="ascentPercent" class="font-bold text-[#e6be7d] tabular-nums">0%</span>
+                </div>
+                <div class="w-full h-2 bg-[#2c151e] rounded-full overflow-hidden mb-2.5">
+                    <div id="ascentBar" class="h-full bg-gradient-to-r from-[#8f2d47] to-[#d4a359] transition-[width] duration-200" style="width: 0%"></div>
+                </div>
+                <button id="ascentBtn" disabled class="w-full h-10 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center justify-center bg-[#28141c] text-[#c7afa8]/50 border border-white/5 cursor-not-allowed">
+                    <span id="ascentBtnLabel" class="truncate">Нужно больше тепла для разрядки</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ПРАВАЯ КОЛОНКА: ПРОКАЧКИ, ИГРУШКИ, СВЯЗКИ, БЛИЗОСТЬ -->
+        <section id="rightColumn" class="lg:col-span-7 xl:col-span-8 boudoir-surface rounded-2xl p-3.5 flex flex-col gap-3 lg:overflow-hidden min-h-[460px]">
+
+            <!-- Вкладки раздела -->
+            <div class="grid grid-cols-4 gap-1.5 bg-[#160b0f]/80 p-1 rounded-xl border border-[var(--border-hairline)] shrink-0">
+                <button data-tab="touches" class="nav-tab h-9 px-2 rounded-lg text-xs font-bold transition truncate bg-[#8f2d47] text-[#fff5f7]">
+                    Прикосновения
+                </button>
+                <button data-tab="toys" class="nav-tab h-9 px-2 rounded-lg text-xs font-bold transition truncate text-[#c7afa8] hover:text-[#f5ebe6]">
+                    Игрушки
+                </button>
+                <button data-tab="synergies" class="nav-tab h-9 px-2 rounded-lg text-xs font-bold transition truncate text-[#c7afa8] hover:text-[#f5ebe6] relative">
+                    Связки
+                    <span id="synBadge" class="hidden ml-1 px-1.5 py-0.2 rounded-full bg-[#d4a359] text-[#170b0f] text-[10px] font-extrabold tabular-nums">0</span>
+                </button>
+                <button data-tab="intimacy" class="nav-tab h-9 px-2 rounded-lg text-xs font-bold transition truncate text-[#e6be7d] hover:text-white">
+                    Близость
+                </button>
+            </div>
+
+            <!-- Строка кратности покупки (x1 / x10 / MAX) -->
+            <div id="bulkRow" class="flex items-center justify-between gap-2 px-1 shrink-0">
+                <span id="sectionSubtitle" class="text-xs text-[#c7afa8] truncate">Усиливай каждое прикосновение и держи ровный темп</span>
+                <div class="flex items-center gap-1 bg-[#160b0f] p-1 rounded-lg border border-[var(--border-hairline)] shrink-0">
+                    <button data-bulk="1" class="bulk-btn px-2.5 py-1 rounded-md text-xs font-bold bg-[#d4a359] text-[#170b0f]">x1</button>
+                    <button data-bulk="10" class="bulk-btn px-2.5 py-1 rounded-md text-xs font-bold text-[#c7afa8] hover:text-white">x10</button>
+                    <button data-bulk="max" class="bulk-btn px-2.5 py-1 rounded-md text-xs font-bold text-[#c7afa8] hover:text-white">MAX</button>
+                </div>
+            </div>
+
+            <!-- Список карточек -->
+            <div id="catalogList" class="flex-1 overflow-y-auto space-y-2 pr-0.5">
+                <!-- Заполняется скриптом -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Мобильный переключатель экранов -->
+    <div class="lg:hidden fixed bottom-0 inset-x-0 z-40 boudoir-surface border-t border-[var(--border-hairline)] grid grid-cols-2 h-12">
+        <button onclick="document.getElementById('leftColumn').scrollIntoView({ behavior: 'smooth' })" class="text-xs font-bold text-[#f5ebe6] border-r border-[var(--border-hairline)]">
+            К центру и накалу
+        </button>
+        <button onclick="document.getElementById('rightColumn').scrollIntoView({ behavior: 'smooth' })" class="text-xs font-bold text-[#e6be7d]">
+            К покупкам и связкам
+        </button>
+    </div>
+
+    <!-- =========================================================================
+         МОДАЛКА 1: ДНЕВНИК ЖЕЛАНИЙ (10 ОТКРЫВАЕМЫХ СЦЕН)
+         ========================================================================= -->
+    <div id="diaryModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+        <div class="boudoir-surface w-full max-w-3xl max-h-[86vh] rounded-2xl flex flex-col overflow-hidden">
+            <div class="px-4 py-3 border-b border-[var(--border-hairline)] flex items-center justify-between shrink-0">
+                <div>
+                    <h2 class="font-editorial text-2xl font-bold text-[#f5ebe6] leading-none">Дневник желаний</h2>
+                    <p class="text-xs text-[#c7afa8] mt-1">Каждая глава добавляет +3% к получаемому теплу</p>
+                </div>
+                <button onclick="closeModal('diaryModal')" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-[#f5ebe6] text-sm font-bold">✕</button>
+            </div>
+            <div id="diaryList" class="p-4 overflow-y-auto space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         МОДАЛКА 2: 50 ДОСТИЖЕНИЙ С ФИЛЬТРАМИ
+         ========================================================================= -->
+    <div id="achModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+        <div class="boudoir-surface w-full max-w-4xl max-h-[86vh] rounded-2xl flex flex-col overflow-hidden">
+            <div class="px-4 py-3 border-b border-[var(--border-hairline)] flex flex-wrap items-center justify-between gap-2 shrink-0">
+                <div>
+                    <h2 class="font-editorial text-2xl font-bold text-[#f5ebe6] leading-none">Трофеи</h2>
+                    <p class="text-xs text-[#c7afa8] mt-1">
+                        Каждый трофей даёт +1.5% ко всему теплу. Сейчас: <span id="achTotalBonus" class="text-[#e6be7d] font-bold tabular-nums">+0%</span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button data-achfilter="all" class="ach-filter px-2.5 py-1 rounded-lg text-xs font-bold bg-[#8f2d47] text-white">Все</button>
+                    <button data-achfilter="unlocked" class="ach-filter px-2.5 py-1 rounded-lg text-xs font-bold bg-white/5 text-[#c7afa8]">Открытые</button>
+                    <button data-achfilter="locked" class="ach-filter px-2.5 py-1 rounded-lg text-xs font-bold bg-white/5 text-[#c7afa8]">Закрытые</button>
+                    <button onclick="closeModal('achModal')" class="w-8 h-8 ml-1 rounded-lg bg-white/5 hover:bg-white/10 text-[#f5ebe6] text-sm font-bold">✕</button>
+                </div>
+            </div>
+            <div id="achGrid" class="p-4 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         МОДАЛКА 3: ДОСЬЕ, СТАТИСТИКА И СОХРАНЕНИЯ
+         ========================================================================= -->
+    <div id="saveModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+        <div class="boudoir-surface w-full max-w-xl max-h-[86vh] rounded-2xl flex flex-col overflow-hidden">
+            <div class="px-4 py-3 border-b border-[var(--border-hairline)] flex items-center justify-between shrink-0">
+                <h2 class="font-editorial text-2xl font-bold text-[#f5ebe6] leading-none">Досье и сохранение</h2>
+                <button onclick="closeModal('saveModal')" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-[#f5ebe6] text-sm font-bold">✕</button>
+            </div>
+            <div class="p-4 overflow-y-auto space-y-4">
+                <div id="dossierStats" class="grid grid-cols-2 gap-2"></div>
+
+                <div class="border-t border-[var(--border-hairline)] pt-3 space-y-2">
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="saveToStorage(true)" class="px-3 py-1.5 rounded-lg bg-[#8f2d47] hover:bg-[#a33553] text-white text-xs font-bold transition">Сохранить</button>
+                        <button onclick="exportCode()" class="px-3 py-1.5 rounded-lg bg-[#341924] hover:bg-[#44212f] text-[#f5ebe6] text-xs font-bold border border-[var(--border-hairline)] transition">Скопировать код</button>
+                        <button onclick="importCode()" class="px-3 py-1.5 rounded-lg bg-[#341924] hover:bg-[#44212f] text-[#f5ebe6] text-xs font-bold border border-[var(--border-hairline)] transition">Загрузить код</button>
+                        <button id="wipeBtn" onclick="handleWipeClick()" class="px-3 py-1.5 rounded-lg bg-[#250d13] hover:bg-[#3b121c] text-[#e598a6] text-xs font-bold border border-[#8f2d47]/40 transition">Сбросить всё</button>
+                    </div>
+                    <textarea id="saveStringInput" rows="2" placeholder="Строка сохранения для переноса между устройствами..." class="w-full rounded-xl bg-[#140a0e] border border-[var(--border-hairline)] p-2 text-xs text-[#f5ebe6] focus:outline-none focus:border-[#d4a359]"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // 1. МЯГКИЙ СИНТЕЗАТОР ЗВУКА (ПО УМОЛЧАНИЮ ВЫКЛЮЧЕН, БЕЗ ВНЕШНИХ ФАЙЛОВ)
+        // =========================================================================
+        class WarmSound {
+            constructor() {
+                this.ctx = null;
+                this.active = false;
+            }
+
+            ensureCtx() {
+                if (!this.ctx) {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AC();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            tap(inSweetSpot = false, isCrit = false) {
+                if (!this.active) return;
+                this.ensureCtx();
+                const t = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = isCrit ? 'triangle' : 'sine';
+                const startFreq = isCrit ? 390 : (inSweetSpot ? 275 : 210);
+                osc.frequency.setValueAtTime(startFreq, t);
+                osc.frequency.exponentialRampToValueAtTime(startFreq * 0.72, t + 0.11);
+
+                gain.gain.setValueAtTime(0.06, t);
+                gain.gain.exponentialRampToValueAtTime(0.0008, t + 0.12);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(t);
+                osc.stop(t + 0.13);
+            }
+
+            chime() {
+                if (!this.active) return;
+                this.ensureCtx();
+                const t = this.ctx.currentTime;
+                [293.66, 369.99, 440].forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, t + i * 0.05);
+                    gain.gain.setValueAtTime(0.05, t + i * 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.0008, t + i * 0.05 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(t + i * 0.05);
+                    osc.stop(t + i * 0.05 + 0.26);
+                });
+            }
+        }
+
+        const warmSound = new WarmSound();
+
+        // =========================================================================
+        // 2. КОНТЕНТ: ПРИКОСНОВЕНИЯ, ИГРУШКИ, СВЯЗКИ, БЛИЗОСТЬ, СЦЕНЫ, 50 ТРОФЕЕВ
+        // =========================================================================
+        const TOUCH_ITEMS = [
+            { id: 'tc1', name: 'Кончик пальца', desc: 'Лёгкое скольжение по тёплой коже без спешки.', baseCost: 12, mult: 1.17, power: 1, coolEase: 0.08 },
+            { id: 'tc2', name: 'Тёплое дыхание у шеи', desc: 'Едва уловимый шелест прямо у чувствительного места.', baseCost: 75, mult: 1.18, power: 4, coolEase: 0.12 },
+            { id: 'tc3', name: 'Влажный поцелуй', desc: 'Медленный акцент губ, сбивающий дыхание.', baseCost: 380, mult: 1.19, power: 15, coolEase: 0.16 },
+            { id: 'tc4', name: 'Малый круг', desc: 'Ровные витки вокруг точки, собирающие тепло.', baseCost: 1900, mult: 1.20, power: 60, coolEase: 0.20 },
+            { id: 'tc5', name: 'Лёгкий укус за мочку', desc: 'Короткая дерзость, от которой по спине бежит озноб.', baseCost: 9500, mult: 1.21, power: 240, coolEase: 0.25 },
+            { id: 'tc6', name: 'Подзывное движение', desc: 'Плавный изгиб пальца, когда хочется ближе.', baseCost: 48000, mult: 1.22, power: 980, coolEase: 0.30 },
+            { id: 'tc7', name: 'Скольжение на масле', desc: 'Тёплое масло убирает лишнее трение и ускоряет отклик.', baseCost: 240000, mult: 1.23, power: 4000, coolEase: 0.38 },
+            { id: 'tc8', name: 'Два ритма в унисон', desc: 'Одна рука задаёт такт, другая подхватывает волну.', baseCost: 1250000, mult: 1.24, power: 16500, coolEase: 0.45 },
+            { id: 'tc9', name: 'Почти замирание', desc: 'Почти неподвижное прикосновение на грани срыва.', baseCost: 6500000, mult: 1.25, power: 68000, coolEase: 0.55 },
+            { id: 'tc10', name: 'Долгий поцелуй языком', desc: 'Уверенный, глубокий темп без суеты и пауз.', baseCost: 35000000, mult: 1.26, power: 290000, coolEase: 0.65 },
+            { id: 'tc11', name: 'Точный удар в пульс', desc: 'Попадание в самый центр, где дрожат колени.', baseCost: 190000000, mult: 1.27, power: 1250000, coolEase: 0.80 },
+            { id: 'tc12', name: 'Полная самоотдача', desc: 'Момент, когда уже не хочется считать секунды.', baseCost: 1100000000, mult: 1.29, power: 5500000, coolEase: 1.00 }
+        ];
+
+        const TOY_ITEMS = [
+            { id: 'ty1', name: 'Пёрышко фазана', desc: 'Щекочет так, что трудно удержать улыбку.', baseCost: 20, pps: 0.6 },
+            { id: 'ty2', name: 'Кусочек тающего льда', desc: 'Холод на секунду, а следом — горячая волна.', baseCost: 130, pps: 3.4 },
+            { id: 'ty3', name: 'Мини-вибратор «Капля»', desc: 'Тихий, ладный прибор для точечной работы.', baseCost: 780, pps: 17 },
+            { id: 'ty4', name: 'Масло с ванилью и мускусом', desc: 'Остаётся на пальцах и держит тепло дольше.', baseCost: 4400, pps: 82 },
+            { id: 'ty5', name: 'Пульсовый стимулятор', desc: 'Ровная волна воздуха вокруг самого чуткого места.', baseCost: 24000, pps: 390 },
+            { id: 'ty6', name: 'Беспроводное яйцо', desc: 'Незаметный секрет под тонким шёлком.', baseCost: 130000, pps: 1900 },
+            { id: 'ty7', name: 'Гладкое стекло', desc: 'Прохладный старт, который быстро греется в руке.', baseCost: 720000, pps: 9000 },
+            { id: 'ty8', name: 'Шёлковая лента и зажимы', desc: 'Мягкое натяжение, обостряющее каждый вдох.', baseCost: 4000000, pps: 43000 },
+            { id: 'ty9', name: 'Глубокий жезл', desc: 'Низкий ровный гул, пробирающий до костей.', baseCost: 22000000, pps: 210000 },
+            { id: 'ty10', name: 'Ритмичный тренажёр', desc: 'Держит заданный темп, пока ты переводишь дух.', baseCost: 125000000, pps: 1020000 },
+            { id: 'ty11', name: 'Послушный партнёр', desc: 'Чуть угадывает каждое движение без лишних слов.', baseCost: 720000000, pps: 5000000 },
+            { id: 'ty12', name: 'Вечер на двоих без часов', desc: 'Когда телефон выключен, а ночь только началась.', baseCost: 4200000000, pps: 25000000 },
+            { id: 'ty13', name: 'Закрытая спальня', desc: 'Плотные шторы, тёплый свет и никого вокруг.', baseCost: 25000000000, pps: 130000000 },
+            { id: 'ty14', name: 'Бесконечная ночь', desc: 'Состояние, из которого не хочется возвращаться.', baseCost: 160000000000, pps: 690000000 }
+        ];
+
+        const SYNERGY_ITEMS = [
+            { id: 'sy1', name: 'Мягкие подушечки', desc: 'Сила каждого прикосновения удваивается (x2).', cost: 100, req: () => state.totalTaps >= 20, mod: { clickMult: 2 } },
+            { id: 'sy2', name: 'Лёгкий щекочущий такт', desc: 'Пёрышко фазана приносит вдвое больше тепла.', cost: 220, req: () => (state.toys.ty1 || 0) >= 5, mod: { toyId: 'ty1', toyMult: 2 } },
+            { id: 'sy3', name: 'Контраст и выдержка', desc: 'Лёд вдвое сильнее, а накал растёт на 15% медленнее.', cost: 950, req: () => (state.toys.ty2 || 0) >= 5, mod: { toyId: 'ty2', toyMult: 2, tensionEase: 0.15 } },
+            { id: 'sy4', name: 'Сбой дыхания', desc: 'Шанс яркого всплеска +6%, множитель всплеска +1.5x.', cost: 3100, req: () => state.totalTaps >= 120, mod: { critChance: 0.06, critMult: 1.5 } },
+            { id: 'sy5', name: 'Полный заряд «Капли»', desc: 'Мини-вибратор работает в 2.5 раза сильнее.', cost: 6800, req: () => (state.toys.ty3 || 0) >= 5, mod: { toyId: 'ty3', toyMult: 2.5 } },
+            { id: 'sy6', name: 'Шлейф на коже', desc: 'Масло вдвое сильнее + весь поток тепла +15%.', cost: 19500, req: () => (state.toys.ty4 || 0) >= 5, mod: { toyId: 'ty4', toyMult: 2, globalMult: 0.15 } },
+            { id: 'sy7', name: 'Отзвук в пальцах', desc: 'Каждое касание добавляет +1.5% от текущего потока в секунду.', cost: 58000, req: () => getTotalToys() >= 25, mod: { ppsShareToTap: 0.015 } },
+            { id: 'sy8', name: 'Ровная волна', desc: 'Пульсовый стимулятор в 2.5 раза эффективнее.', cost: 160000, req: () => (state.toys.ty5 || 0) >= 5, mod: { toyId: 'ty5', toyMult: 2.5 } },
+            { id: 'sy9', name: 'Ровное дыхание', desc: 'Накал остывает на 35% быстрее после паузы.', cost: 410000, req: () => state.totalTaps >= 500, mod: { coolSpeed: 0.35 } },
+            { id: 'sy10', name: 'Дальний пульт', desc: 'Беспроводное яйцо x2.5 сильнее + зона наслаждения шире на 4%.', cost: 890000, req: () => (state.toys.ty6 || 0) >= 5, mod: { toyId: 'ty6', toyMult: 2.5, zoneBonus: 0.04 } },
+            { id: 'sy11', name: 'Тёплое стекло', desc: 'Гладкое стекло x2.5 сильнее + шанс всплеска +6%.', cost: 4400000, req: () => (state.toys.ty7 || 0) >= 5, mod: { toyId: 'ty7', toyMult: 2.5, critChance: 0.06 } },
+            { id: 'sy12', name: 'Чуткая рука', desc: 'Игрушки получают +1% к теплу за каждый уровень прикосновений.', cost: 14000000, req: () => getTotalToys() >= 70, mod: { touchToToys: 0.01 } },
+            { id: 'sy13', name: 'Шёлк и натяжение', desc: 'Лента и зажимы в 3 раза эффективнее.', cost: 26000000, req: () => (state.toys.ty8 || 0) >= 5, mod: { toyId: 'ty8', toyMult: 3 } },
+            { id: 'sy14', name: 'Низкий резонанс', desc: 'Глубокий жезл в 3 раза эффективнее.', cost: 150000000, req: () => (state.toys.ty9 || 0) >= 5, mod: { toyId: 'ty9', toyMult: 3 } },
+            { id: 'sy15', name: 'Нежное скольжение', desc: 'Прикосновения x3 сильнее, накал от них растёт на 25% мягче.', cost: 480000000, req: () => state.totalTaps >= 1800, mod: { clickMult: 3, tensionEase: 0.25 } },
+            { id: 'sy16', name: 'Точный метроном', desc: 'Ритмичный тренажёр в 3 раза эффективнее.', cost: 920000000, req: () => (state.toys.ty10 || 0) >= 5, mod: { toyId: 'ty10', toyMult: 3 } },
+            { id: 'sy17', name: 'С полуслова', desc: 'Послушный партнёр x3 сильнее + весь поток тепла +25%.', cost: 5000000000, req: () => (state.toys.ty11 || 0) >= 5, mod: { toyId: 'ty11', toyMult: 3, globalMult: 0.25 } },
+            { id: 'sy18', name: 'До самого дна', desc: 'Вечер без часов x3 сильнее + сила всплеска +3x.', cost: 28000000000, req: () => (state.toys.ty12 || 0) >= 5, mod: { toyId: 'ty12', toyMult: 3, critMult: 3 } },
+            { id: 'sy19', name: 'Запертая дверь', desc: 'Закрытая спальня в 3.5 раза эффективнее.', cost: 170000000000, req: () => (state.toys.ty13 || 0) >= 5, mod: { toyId: 'ty13', toyMult: 3.5 } },
+            { id: 'sy20', name: 'Утро не скоро', desc: 'Бесконечная ночь x4 сильнее + весь поток тепла +45%.', cost: 1100000000000, req: () => (state.toys.ty14 || 0) >= 5, mod: { toyId: 'ty14', toyMult: 4, globalMult: 0.45 } }
+        ];
+
+        const INTIMACY_PERKS = [
+            { id: 'ip1', name: 'Память кожи', desc: '+25% ко всему теплу за каждый уровень.', baseCost: 1, max: 20, mult: 1.6 },
+            { id: 'ip2', name: 'Ласка на удержании', desc: 'При зажатии пальца/кнопки добавляет +3 касания/сек за уровень.', baseCost: 2, max: 10, mult: 2.1 },
+            { id: 'ip3', name: 'Ровный выдох', desc: 'Накал растёт на 6% мягче за каждый уровень.', baseCost: 2, max: 15, mult: 1.7 },
+            { id: 'ip4', name: 'Тёплый старт', desc: 'После разрядки сразу остаётся запас тепла (1 000 × уровень²).', baseCost: 3, max: 10, mult: 2.0 },
+            { id: 'ip5', name: 'Острый отклик', desc: '+2% к шансу всплеска и +1x к его силе за уровень.', baseCost: 4, max: 15, mult: 1.8 },
+            { id: 'ip6', name: 'Щедрый запас', desc: 'Снижает цены прикосновений и игрушек на 4% за уровень.', baseCost: 5, max: 10, mult: 2.2 },
+            { id: 'ip7', name: 'Яркие искры', desc: '+20% к искрам близости при каждой разрядке за уровень.', baseCost: 8, max: 10, mult: 2.4 }
+        ];
+
+        // 10 атмосферных сцен «Дневника желаний» (открываются по накопленному теплу)
+        const DIARY_SCENES = [
+            { id: 'd1', title: 'Глава I. Шорох шёлка', unlockPleasure: 150, moodNote: 'Тихий вечер', text: 'Лампа на тумбочке прикручена почти до минимума. Пальцы случайно задевают край ткани — и вдруг становится ясно, что торопиться сегодня никто не собирается.' },
+            { id: 'd2', title: 'Глава II. Дыхание в затылок', unlockPleasure: 2500, moodNote: 'Ближе, чем нужно', text: 'Один выдох у самого уха — и кожа отвечает мгновенным мурашечным откликом. Разговор обрывается на полуслове, потому что слова уже лишние.' },
+            { id: 'd3', title: 'Глава III. Капля на запястье', unlockPleasure: 30000, moodNote: 'Тёплый след', text: 'Несколько капель масла остывают ровно секунду, а потом сливаются с теплом тела. Движения становятся медленнее, зато каждое ощущается втрое отчётливее.' },
+            { id: 'd4', title: 'Глава IV. Забытый стакан воды', unlockPleasure: 350000, moodNote: 'Сбит ритм', text: 'Ты тянешься к столу, но руку перехватывают за запястье. Лёгкий нажим большим пальцем — и мысль о воде вылетает из головы начисто.' },
+            { id: 'd5', title: 'Глава V. Под тонким платьем', unlockPleasure: 4000000, moodNote: 'На грани', text: 'Не снимая лишнего сразу, дразня сквозь ткань — так, чтобы каждый сантиметр ждал своей очереди. В комнате слышно только ровное дыхание.' },
+            { id: 'd6', title: 'Глава VI. Тихий спор двух рук', unlockPleasure: 50000000, moodNote: 'Два темпа', text: 'Одна рука гладит медленно, почти убаюкивая, а другая сбивает этот покой коротким, точным прикосновением. Выбрать какой-то один ритм невозможно.' },
+            { id: 'd7', title: 'Глава VII. Край подушки', unlockPleasure: 600000000, moodNote: 'Жар в груди', text: 'Пальцы вплетаются в простыню, дыхание сбивается на короткие вздохи. Кажется, воздух в комнате стал густым и горячим.' },
+            { id: 'd8', title: 'Глава VIII. Без слов', unlockPleasure: 7500000000, moodNote: 'Полный слух', text: 'Ни одного вопроса, ни одной фразы — только взгляд в упор и движение, от которого перехватывает горло.' },
+            { id: 'd9', title: 'Глава IX. Волна за волной', unlockPleasure: 90000000000, moodNote: 'Не отпускать', text: 'Когда кажется, что пик уже прошёл, следует ещё одно мягкое касание — и волна накрывает снова, ещё глубже прежнего.' },
+            { id: 'd10', title: 'Глава X. До рассвета', unlockPleasure: 1000000000000, moodNote: 'Свой мир', text: 'За окном давно ночь, а здесь время течёт по своим правилам: медленно, жадно и без желания ставить точку.' }
+        ];
+
+        // 50 трофеев с живыми формулировками
+        const ACHIEVEMENTS = [
+            { id: 'a1', name: 'Первый шаг', desc: 'Сделать 1 прикосновение.', fn: s => s.totalTaps >= 1 },
+            { id: 'a2', name: 'Разминка пальцев', desc: 'Сделать 50 прикосновений.', fn: s => s.totalTaps >= 50 },
+            { id: 'a3', name: 'Ровный такт', desc: 'Сделать 250 прикосновений.', fn: s => s.totalTaps >= 250 },
+            { id: 'a4', name: 'Неутомимая рука', desc: 'Сделать 1 000 прикосновений.', fn: s => s.totalTaps >= 1000 },
+            { id: 'a5', name: 'Чуткий почерк', desc: 'Сделать 5 000 прикосновений.', fn: s => s.totalTaps >= 5000 },
+            { id: 'a6', name: 'Знаток оттенков', desc: 'Сделать 15 000 прикосновений.', fn: s => s.totalTaps >= 15000 },
+            { id: 'a7', name: 'Ночь без сна', desc: 'Сделать 40 000 прикосновений.', fn: s => s.totalTaps >= 40000 },
+            { id: 'a8', name: 'Мастер касаний', desc: 'Сделать 100 000 прикосновений.', fn: s => s.totalTaps >= 100000 },
+
+            { id: 'a9', name: 'Первое тепло', desc: 'Накопить 100 тепла за всё время.', fn: s => s.totalPleasure >= 100 },
+            { id: 'a10', name: 'Тёплый вечер', desc: 'Накопить 10 000 тепла.', fn: s => s.totalPleasure >= 10000 },
+            { id: 'a11', name: 'Жар под кожей', desc: 'Накопить 1 000 000 тепла.', fn: s => s.totalPleasure >= 1e6 },
+            { id: 'a12', name: 'Полночный огонь', desc: 'Накопить 100 000 000 тепла.', fn: s => s.totalPleasure >= 1e8 },
+            { id: 'a13', name: 'Глубокий омут', desc: 'Накопить 10 млрд тепла.', fn: s => s.totalPleasure >= 1e10 },
+            { id: 'a14', name: 'Бескрайний шёлк', desc: 'Накопить 1 трлн тепла.', fn: s => s.totalPleasure >= 1e12 },
+            { id: 'a15', name: 'Сверхновой жар', desc: 'Накопить 100 трлн тепла.', fn: s => s.totalPleasure >= 1e14 },
+            { id: 'a16', name: 'Вечный зной', desc: 'Накопить 10 квдр тепла.', fn: s => s.totalPleasure >= 1e16 },
+
+            { id: 'a17', name: 'Тихий фон', desc: 'Достичь 10 тепла в секунду.', fn: () => getPps() >= 10 },
+            { id: 'a18', name: 'Ровный гул', desc: 'Достичь 1 000 тепла в секунду.', fn: () => getPps() >= 1000 },
+            { id: 'a19', name: 'Плотный поток', desc: 'Достичь 100 000 тепла в секунду.', fn: () => getPps() >= 100000 },
+            { id: 'a20', name: 'Непрерывная волна', desc: 'Достичь 10 млн тепла в секунду.', fn: () => getPps() >= 1e7 },
+            { id: 'a21', name: 'Полноводье', desc: 'Достичь 1 млрд тепла в секунду.', fn: () => getPps() >= 1e9 },
+            { id: 'a22', name: 'Без остановки', desc: 'Достичь 50 млрд тепла в секунду.', fn: () => getPps() >= 5e10 },
+
+            { id: 'a23', name: 'Щекотка', desc: 'Взять 10 пёрышек фазана.', fn: s => (s.toys.ty1 || 0) >= 10 },
+            { id: 'a24', name: 'Холод и жар', desc: 'Взять 15 кусочков льда.', fn: s => (s.toys.ty2 || 0) >= 15 },
+            { id: 'a25', name: 'Точная капля', desc: 'Взять 15 мини-вибраторов «Капля».', fn: s => (s.toys.ty3 || 0) >= 15 },
+            { id: 'a26', name: 'Аромат вечера', desc: 'Взять 20 масел с ванилью и мускусом.', fn: s => (s.toys.ty4 || 0) >= 20 },
+            { id: 'a27', name: 'Воздушный такт', desc: 'Взять 15 пульсовых стимуляторов.', fn: s => (s.toys.ty5 || 0) >= 15 },
+            { id: 'a28', name: 'Скрытый секрет', desc: 'Взять 15 беспроводных яиц.', fn: s => (s.toys.ty6 || 0) >= 15 },
+            { id: 'a29', name: 'Стеклянный блеск', desc: 'Взять 12 предметов из гладкого стекла.', fn: s => (s.toys.ty7 || 0) >= 12 },
+            { id: 'a30', name: 'Лента и такт', desc: 'Взять 10 наборов шёлковой ленты и зажимов.', fn: s => (s.toys.ty8 || 0) >= 10 },
+            { id: 'a31', name: 'Низкая нота', desc: 'Взять 10 глубоких жезлов.', fn: s => (s.toys.ty9 || 0) >= 10 },
+            { id: 'a32', name: 'Метроном', desc: 'Взять 10 ритмичных тренажёров.', fn: s => (s.toys.ty10 || 0) >= 10 },
+            { id: 'a33', name: 'Понимание', desc: 'Открыть 5 послушных партнёров.', fn: s => (s.toys.ty11 || 0) >= 5 },
+            { id: 'a34', name: 'Без стрелок', desc: 'Открыть 5 вечеров на двоих без часов.', fn: s => (s.toys.ty12 || 0) >= 5 },
+            { id: 'a35', name: 'За шторами', desc: 'Открыть 3 закрытые спальни.', fn: s => (s.toys.ty13 || 0) >= 3 },
+            { id: 'a36', name: 'Долгий рассвет', desc: 'Открыть 1 бесконечную ночь.', fn: s => (s.toys.ty14 || 0) >= 1 },
+
+            { id: 'a37', name: 'Полный комод', desc: 'Собрать суммарно 100 игрушек и предметов.', fn: () => getTotalToys() >= 100 },
+            { id: 'a38', name: 'Богатый арсенал', desc: 'Собрать суммарно 300 игрушек и предметов.', fn: () => getTotalToys() >= 300 },
+            { id: 'a39', name: 'Уверенный почерк', desc: 'Прокачать суммарно 50 уровней прикосновений.', fn: () => getTotalTouches() >= 50 },
+            { id: 'a40', name: 'Тонкие связи', desc: 'Купить 10 связок.', fn: s => Object.keys(s.synergies).length >= 10 },
+
+            { id: 'a41', name: 'В самую точку', desc: 'Выбить 50 ярких всплесков.', fn: s => s.totalCrits >= 50 },
+            { id: 'a42', name: 'Сбилось дыхание', desc: 'Поймать одышку 1 раз.', fn: s => s.windedCount >= 1 },
+            { id: 'a43', name: 'Не удержать темп', desc: 'Поймать одышку 10 раз.', fn: s => s.windedCount >= 10 },
+            { id: 'a44', name: 'Послушный каприз', desc: 'Выполнить 5 «Капризов момента».', fn: s => s.cravingsDone >= 5 },
+            { id: 'a45', name: 'Любимец капризов', desc: 'Выполнить 20 «Капризов момента».', fn: s => s.cravingsDone >= 20 },
+
+            { id: 'a46', name: 'Первая разрядка', desc: 'Совершить первую разрядку.', fn: s => s.ascentCount >= 1 },
+            { id: 'a47', name: 'Второе дыхание', desc: 'Совершить 5 разрядок.', fn: s => s.ascentCount >= 5 },
+            { id: 'a48', name: 'Десятая волна', desc: 'Совершить 10 разрядок.', fn: s => s.ascentCount >= 10 },
+            { id: 'a49', name: 'Страница за страницей', desc: 'Открыть 5 глав в Дневнике желаний.', fn: () => getUnlockedDiaryCount() >= 5 },
+            { id: 'a50', name: 'Все главы открыты', desc: 'Открыть все 10 глав Дневника желаний.', fn: () => getUnlockedDiaryCount() >= 10 }
+        ];
+
+        // =========================================================================
+        // 3. СОСТОЯНИЕ ИГРЫ
+        // =========================================================================
+        const SAVE_KEY = 'evening_whisper_save_v1';
+
+        function createInitialState() {
+            return {
+                pleasure: 0,
+                totalPleasure: 0,
+                cyclePleasure: 0,
+                sparks: 0,
+                ascentCount: 0,
+                totalTaps: 0,
+                totalCrits: 0,
+                windedCount: 0,
+                cravingsDone: 0,
+                playSeconds: 0,
+                touches: {},
+                toys: {},
+                synergies: {},
+                intimacy: {},
+                achievements: {},
+                lastSeen: Date.now()
+            };
+        }
+
+        let state = createInitialState();
+
+        // Текущие параметры сессии
+        let activeTab = 'touches';
+        let bulkMode = 1; // 1, 10, 'max'
+        let achFilterMode = 'all';
+
+        let tension = 0; // 0 .. 100
+        let windedSeconds = 0;
+        let lastTapTime = 0;
+        let isPointerHeld = false;
+        let holdCarry = 0;
+
+        // Состояние живого мини-испытания «Каприз момента»
+        let craving = {
+            type: 'taps', // 'taps' | 'sweetspot' | 'calm'
+            label: 'Сделай 12 касаний в ровном темпе',
+            progress: 0,
+            target: 12,
+            timeLeft: 14,
+            duration: 14,
+            reward: 35,
+            ready: false
+        };
+
+        // =========================================================================
+        // 4. ФОРМАТИРОВАНИЕ И РАСЧЁТЫ ЭКОНОМИКИ
+        // =========================================================================
+        const UNITS = ['', 'тыс.', 'млн', 'млрд', 'трлн', 'квдр', 'квнт', 'скст', 'сптл'];
+
+        function fmt(n) {
+            if (!isFinite(n) || n <= 0) return '0';
+            if (n < 1000) return n % 1 === 0 ? String(Math.floor(n)) : n.toFixed(1);
+            const exp = Math.floor(Math.log10(n) / 3);
+            if (exp >= UNITS.length) return n.toExponential(2);
+            const val = n / Math.pow(10, exp * 3);
+            return `${val.toFixed(2)} ${UNITS[exp]}`;
+        }
+
+        function getTotalTouches() {
+            return Object.values(state.touches).reduce((a, b) => a + b, 0);
+        }
+
+        function getTotalToys() {
+            return Object.values(state.toys).reduce((a, b) => a + b, 0);
+        }
+
+        function getUnlockedDiaryCount() {
+            return DIARY_SCENES.filter(d => state.totalPleasure >= d.unlockPleasure).length;
+        }
+
+        function getPriceFactor() {
+            const lvl = state.intimacy.ip6 || 0;
+            return Math.max(0.45, 1 - lvl * 0.04);
+        }
+
+        function getSweetSpotRange() {
+            const extra = state.synergies.sy10 ? 0.04 : 0;
+            return { min: 55, max: Math.min(92, 82 + extra * 100) };
+        }
+
+        function isInSweetSpot() {
+            const { min, max } = getSweetSpotRange();
+            return windedSeconds <= 0 && tension >= min && tension <= max;
+        }
+
+        function getGlobalMult() {
+            const sparkMult = 1 + state.sparks * 0.10;
+            const ip1Mult = 1 + (state.intimacy.ip1 || 0) * 0.25;
+            const achMult = 1 + Object.keys(state.achievements).length * 0.015;
+            const diaryMult = 1 + getUnlockedDiaryCount() * 0.03;
+
+            let synMult = 1;
+            if (state.synergies.sy6) synMult += 0.15;
+            if (state.synergies.sy17) synMult += 0.25;
+            if (state.synergies.sy20) synMult += 0.45;
+
+            const spotMult = isInSweetSpot() ? 1.6 : 1.0;
+
+            return sparkMult * ip1Mult * achMult * diaryMult * synMult * spotMult;
+        }
+
+        function getToyUnitPps(toy) {
+            let val = toy.pps;
+            SYNERGY_ITEMS.forEach(sy => {
+                if (state.synergies[sy.id] && sy.mod.toyId === toy.id && sy.mod.toyMult) {
+                    val *= sy.mod.toyMult;
+                }
+            });
+            if (state.synergies.sy12) {
+                val *= (1 + getTotalTouches() * 0.01);
+            }
+            return val * getGlobalMult();
+        }
+
+        function getPps() {
+            let sum = 0;
+            TOY_ITEMS.forEach(toy => {
+                const cnt = state.toys[toy.id] || 0;
+                if (cnt > 0) sum += getToyUnitPps(toy) * cnt;
+            });
+            return sum;
+        }
+
+        function getTapPower() {
+            let base = 1;
+            TOUCH_ITEMS.forEach(t => {
+                const lvl = state.touches[t.id] || 0;
+                base += lvl * t.power;
+            });
+            if (state.synergies.sy1) base *= 2;
+            if (state.synergies.sy15) base *= 3;
+
+            let total = base * getGlobalMult();
+            if (state.synergies.sy7) {
+                total += getPps() * 0.015;
+            }
+            return total;
+        }
+
+        function getCritConfig() {
+            let chance = 0.05;
+            let mult = 2.4;
+            if (state.synergies.sy4) { chance += 0.06; mult += 1.5; }
+            if (state.synergies.sy11) { chance += 0.06; }
+            if (state.synergies.sy18) { mult += 3.0; }
+
+            const ip5 = state.intimacy.ip5 || 0;
+            chance += ip5 * 0.02;
+            mult += ip5 * 1.0;
+
+            return { chance: Math.min(0.75, chance), mult };
+        }
+
+        function getTensionRates() {
+            let ease = 0;
+            TOUCH_ITEMS.forEach(t => {
+                ease += (state.touches[t.id] || 0) * t.coolEase;
+            });
+            let rise = Math.max(1.4, 6.2 - Math.min(3.8, ease * 0.035));
+            if (state.synergies.sy3) rise *= 0.85;
+            if (state.synergies.sy15) rise *= 0.75;
+            rise *= Math.max(0.35, 1 - (state.intimacy.ip3 || 0) * 0.06);
+
+            let cool = 14;
+            if (state.synergies.sy9) cool *= 1.35;
+
+            return { rise, cool };
+        }
+
+        function calcSeriesCost(baseCost, mult, owned, qty) {
+            const pf = getPriceFactor();
+            const p0 = baseCost * Math.pow(mult, owned) * pf;
+            if (qty === 1) return Math.floor(p0);
+            return Math.floor(p0 * (Math.pow(mult, qty) - 1) / (mult - 1));
+        }
+
+        function calcMaxQty(baseCost, mult, owned, cash) {
+            const pf = getPriceFactor();
+            const p0 = baseCost * Math.pow(mult, owned) * pf;
+            if (cash < p0) return 0;
+            const n = Math.floor(Math.log(1 + (cash * (mult - 1)) / p0) / Math.log(mult));
+            return Math.max(0, Math.min(n, 500));
+        }
+
+        function getAscentGoal() {
+            return 20000 * Math.pow(3.2, state.ascentCount);
+        }
+
+        function getPendingSparks() {
+            const goal = getAscentGoal();
+            if (state.cyclePleasure < goal) return 0;
+            const raw = Math.floor(3 + Math.pow(state.cyclePleasure / goal, 0.65) * 4);
+            const bonus = 1 + (state.intimacy.ip7 || 0) * 0.20;
+            return Math.max(1, Math.floor(raw * bonus));
+        }
+
+        // =========================================================================
+        // 5. ТАКТИЛЬНЫЙ ОТКЛИК, НАКАЛ И «КАПРИЗ МОМЕНТА»
+        // =========================================================================
+        const touchPad = document.getElementById('touchPad');
+        const sculptSvg = document.getElementById('sculptSvg');
+
+        function addRipple(clientX, clientY) {
+            const rect = touchPad.getBoundingClientRect();
+            const ring = document.createElement('span');
+            ring.className = 'ripple-ring';
+            const size = 56;
+            ring.style.width = `${size}px`;
+            ring.style.height = `${size}px`;
+            ring.style.left = `${clientX - rect.left - size / 2}px`;
+            ring.style.top = `${clientY - rect.top - size / 2}px`;
+            touchPad.appendChild(ring);
+            setTimeout(() => ring.remove(), 760);
+        }
+
+        function spawnDelta(clientX, clientY, label, isCrit) {
+            const el = document.createElement('div');
+            el.className = 'pop-delta tabular-nums';
+            el.textContent = label;
+            el.style.left = `${clientX + (Math.random() * 24 - 12)}px`;
+            el.style.top = `${clientY - 8}px`;
+            el.style.color = isCrit ? '#e6be7d' : '#f5ebe6';
+            el.style.fontSize = isCrit ? '18px' : '14px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 940);
+        }
+
+        function triggerTap(clientX, clientY, automated = false) {
+            if (windedSeconds > 0) {
+                if (!automated) {
+                    spawnDelta(clientX, clientY, 'Переводим дух...', false);
+                }
+                return;
+            }
+
+            lastTapTime = performance.now();
+            const { rise } = getTensionRates();
+            tension = Math.min(100, tension + (automated ? rise * 0.45 : rise));
+
+            if (tension >= 100) {
+                windedSeconds = 2.4;
+                state.windedCount++;
+                sculptSvg.classList.add('sculpt-winded');
+                notify('Сбилось дыхание', 'Накал дошёл до края — дай себе пару секунд выдохнуть.');
+                return;
+            }
+
+            const { chance, mult } = getCritConfig();
+            const isCrit = Math.random() < chance;
+            const gained = getTapPower() * (isCrit ? mult : 1);
+
+            grantPleasure(gained);
+            state.totalTaps++;
+            if (isCrit) state.totalCrits++;
+
+            // Прогресс «Каприза момента» по касаниям
+            if (!craving.ready && craving.type === 'taps') {
+                craving.progress = Math.min(craving.target, craving.progress + 1);
+                if (craving.progress >= craving.target) craving.ready = true;
+            }
+
+            if (!automated) {
+                addRipple(clientX, clientY);
+                spawnDelta(clientX, clientY, `+${fmt(gained)}${isCrit ? ' · всплеск' : ''}`, isCrit);
+                warmSound.tap(isInSweetSpot(), isCrit);
+                sculptSvg.classList.add('sculpt-press');
+                setTimeout(() => sculptSvg.classList.remove('sculpt-press'), 75);
+            }
+        }
+
+        function grantPleasure(amount) {
+            state.pleasure += amount;
+            state.totalPleasure += amount;
+            state.cyclePleasure += amount;
+        }
+
+        touchPad.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            isPointerHeld = true;
+            triggerTap(e.clientX, e.clientY, false);
+        });
+
+        window.addEventListener('pointerup', () => {
+            isPointerHeld = false;
+        });
+
+        // Генерация нового «Каприза момента»
+        function rollNextCraving() {
+            const pool = [
+                () => ({
+                    type: 'taps',
+                    label: 'Сделай 14 касаний до истечения времени',
+                    progress: 0,
+                    target: 14,
+                    timeLeft: 13,
+                    duration: 13,
+                    reward: Math.max(25, Math.floor(getTapPower() * 10 + getPps() * 4)),
+                    ready: false
+                }),
+                () => ({
+                    type: 'sweetspot',
+                    label: 'Побудь в зоне наслаждения (55–82%) 4 секунды',
+                    progress: 0,
+                    target: 4,
+                    timeLeft: 18,
+                    duration: 18,
+                    reward: Math.max(40, Math.floor(getTapPower() * 14 + getPps() * 6)),
+                    ready: false
+                }),
+                () => ({
+                    type: 'calm',
+                    label: 'Держи накал ниже 45% в течение 5 секунд',
+                    progress: 0,
+                    target: 5,
+                    timeLeft: 16,
+                    duration: 16,
+                    reward: Math.max(30, Math.floor(getTapPower() * 12 + getPps() * 5)),
+                    ready: false
+                })
+            ];
+            craving = pool[Math.floor(Math.random() * pool.length)]();
+        }
+
+        document.getElementById('cravingClaimBtn').addEventListener('click', () => {
+            if (!craving.ready) return;
+            const bonus = craving.reward * getGlobalMult();
+            grantPleasure(bonus);
+            state.cravingsDone++;
+            warmSound.chime();
+            notify('Каприз выполнен', `Получено +${fmt(bonus)} тепла.`);
+            rollNextCraving();
+        });
+
+        // Разрядка (Престиж)
+        document.getElementById('ascentBtn').addEventListener('click', () => {
+            const gainedSparks = getPendingSparks();
+            if (gainedSparks <= 0) return;
+
+            state.sparks += gainedSparks;
+            state.ascentCount++;
+
+            const seed = Math.pow(state.intimacy.ip4 || 0, 2) * 1000;
+            state.pleasure = seed;
+            state.cyclePleasure = seed;
+            state.touches = {};
+            state.toys = {};
+            state.synergies = {};
+
+            tension = 0;
+            windedSeconds = 0;
+            sculptSvg.classList.remove('sculpt-winded');
+
+            warmSound.chime();
+            notify('Разрядка прошла', `Ты получил +${fmt(gainedSparks)} искр близости.`);
+            renderActiveTab();
+            syncHud();
+            saveToStorage(false);
+        });
+
+        // =========================================================================
+        // 6. ПОКУПКИ И ОТРИСОВКА КАТАЛОГА
+        // =========================================================================
+        function purchaseTouch(id) {
+            const item = TOUCH_ITEMS.find(x => x.id === id);
+            const owned = state.touches[id] || 0;
+            const qty = bulkMode === 'max' ? calcMaxQty(item.baseCost, item.mult, owned, state.pleasure) : bulkMode;
+            if (qty <= 0) return;
+            const cost = calcSeriesCost(item.baseCost, item.mult, owned, qty);
+            if (state.pleasure >= cost) {
+                state.pleasure -= cost;
+                state.touches[id] = owned + qty;
+                warmSound.tap(true, false);
+                renderActiveTab();
+                syncHud();
+            }
+        }
+
+        function purchaseToy(id) {
+            const item = TOY_ITEMS.find(x => x.id === id);
+            const owned = state.toys[id] || 0;
+            const qty = bulkMode === 'max' ? calcMaxQty(item.baseCost, 1.15, owned, state.pleasure) : bulkMode;
+            if (qty <= 0) return;
+            const cost = calcSeriesCost(item.baseCost, 1.15, owned, qty);
+            if (state.pleasure >= cost) {
+                state.pleasure -= cost;
+                state.toys[id] = owned + qty;
+                warmSound.tap(true, false);
+                renderActiveTab();
+                syncHud();
+            }
+        }
+
+        function purchaseSynergy(id) {
+            if (state.synergies[id]) return;
+            const item = SYNERGY_ITEMS.find(x => x.id === id);
+            if (item && item.req() && state.pleasure >= item.cost) {
+                state.pleasure -= item.cost;
+                state.synergies[id] = true;
+                warmSound.chime();
+                renderActiveTab();
+                syncHud();
+            }
+        }
+
+        function purchaseIntimacy(id) {
+            const perk = INTIMACY_PERKS.find(x => x.id === id);
+            const lvl = state.intimacy[id] || 0;
+            if (!perk || lvl >= perk.max) return;
+            const cost = Math.floor(perk.baseCost * Math.pow(perk.mult, lvl));
+            if (state.sparks >= cost) {
+                state.sparks -= cost;
+                state.intimacy[id] = lvl + 1;
+                warmSound.chime();
+                renderActiveTab();
+                syncHud();
+            }
+        }
+
+        function renderActiveTab() {
+            const list = document.getElementById('catalogList');
+            const bulkRow = document.getElementById('bulkRow');
+            const sub = document.getElementById('sectionSubtitle');
+            list.innerHTML = '';
+
+            if (activeTab === 'touches') {
+                bulkRow.classList.remove('hidden');
+                sub.textContent = 'Усиливай прикосновения и снижай рост накала';
+
+                TOUCH_ITEMS.forEach(item => {
+                    const owned = state.touches[item.id] || 0;
+                    const qty = bulkMode === 'max' ? Math.max(1, calcMaxQty(item.baseCost, item.mult, owned, state.pleasure)) : bulkMode;
+                    const cost = calcSeriesCost(item.baseCost, item.mult, owned, qty);
+                    const ok = state.pleasure >= cost;
+
+                    const card = document.createElement('div');
+                    card.className = `shop-item-card rounded-xl p-3 flex items-center justify-between gap-3 ${ok ? 'cursor-pointer' : 'is-locked'}`;
+                    if (ok) card.onclick = () => purchaseTouch(item.id);
+                    card.innerHTML = `
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-[#f5ebe6] truncate">${item.name}</span>
+                                <span class="text-[11px] font-semibold text-[#e6be7d] tabular-nums shrink-0">Ур. ${owned}</span>
+                            </div>
+                            <p class="text-xs text-[#c7afa8] line-clamp-1 mt-0.5">${item.desc}</p>
+                            <div class="text-[11px] text-[#e8a6b6] tabular-nums mt-1">
+                                +${fmt(item.power * getGlobalMult())} за касание · выдержка +${item.coolEase.toFixed(2)}
+                            </div>
+                        </div>
+                        <div class="px-3 py-2 rounded-lg text-right shrink-0 min-w-[92px] ${ok ? 'bg-[#8f2d47] text-white' : 'bg-white/5 text-[#c7afa8]/50'}">
+                            <div class="text-[10px] opacity-85 tabular-nums">Взять x${qty}</div>
+                            <div class="text-xs font-extrabold tabular-nums">${fmt(cost)}</div>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            } else if (activeTab === 'toys') {
+                bulkRow.classList.remove('hidden');
+                sub.textContent = 'Игрушки и детали обстановки приносят тепло каждую секунду';
+
+                TOY_ITEMS.forEach(item => {
+                    const owned = state.toys[item.id] || 0;
+                    const qty = bulkMode === 'max' ? Math.max(1, calcMaxQty(item.baseCost, 1.15, owned, state.pleasure)) : bulkMode;
+                    const cost = calcSeriesCost(item.baseCost, 1.15, owned, qty);
+                    const ok = state.pleasure >= cost;
+                    const unitPps = getToyUnitPps(item);
+
+                    const card = document.createElement('div');
+                    card.className = `shop-item-card rounded-xl p-3 flex items-center justify-between gap-3 ${ok ? 'cursor-pointer' : 'is-locked'}`;
+                    if (ok) card.onclick = () => purchaseToy(item.id);
+                    card.innerHTML = `
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-[#f5ebe6] truncate">${item.name}</span>
+                                <span class="text-[11px] font-semibold text-[#e6be7d] tabular-nums shrink-0">${owned} шт.</span>
+                            </div>
+                            <p class="text-xs text-[#c7afa8] line-clamp-1 mt-0.5">${item.desc}</p>
+                            <div class="text-[11px] text-[#e6be7d] tabular-nums mt-1">
+                                +${fmt(unitPps)}/с за шт.${owned > 0 ? ` · всего ${fmt(unitPps * owned)}/с` : ''}
+                            </div>
+                        </div>
+                        <div class="px-3 py-2 rounded-lg text-right shrink-0 min-w-[92px] ${ok ? 'bg-[#8f2d47] text-white' : 'bg-white/5 text-[#c7afa8]/50'}">
+                            <div class="text-[10px] opacity-85 tabular-nums">Взять x${qty}</div>
+                            <div class="text-xs font-extrabold tabular-nums">${fmt(cost)}</div>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            } else if (activeTab === 'synergies') {
+                bulkRow.classList.add('hidden');
+                const openSyns = SYNERGY_ITEMS.filter(s => !state.synergies[s.id] && s.req());
+                const boughtNum = Object.keys(state.synergies).length;
+
+                const topNote = document.createElement('div');
+                topNote.className = 'flex items-center justify-between text-xs text-[#c7afa8] px-1 pb-1';
+                topNote.innerHTML = `<span>Открываются по мере развития</span><span class="font-bold text-[#e6be7d] tabular-nums">Куплено: ${boughtNum}/${SYNERGY_ITEMS.length}</span>`;
+                list.appendChild(topNote);
+
+                if (openSyns.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'text-center py-10 text-xs text-[#c7afa8]';
+                    empty.textContent = 'Бери игрушки партиями по 5 штук и делай касания — новые связки появятся сами.';
+                    list.appendChild(empty);
+                }
+
+                openSyns.forEach(item => {
+                    const ok = state.pleasure >= item.cost;
+                    const card = document.createElement('div');
+                    card.className = `shop-item-card rounded-xl p-3 flex items-center justify-between gap-3 ${ok ? 'cursor-pointer' : 'is-locked'}`;
+                    if (ok) card.onclick = () => purchaseSynergy(item.id);
+                    card.innerHTML = `
+                        <div class="min-w-0 flex-1">
+                            <div class="font-bold text-sm text-[#e6be7d] truncate">${item.name}</div>
+                            <p class="text-xs text-[#f5ebe6]/85 line-clamp-2 mt-0.5">${item.desc}</p>
+                        </div>
+                        <div class="px-3 py-2 rounded-lg text-xs font-extrabold tabular-nums shrink-0 ${ok ? 'bg-[#d4a359] text-[#170b0f]' : 'bg-white/5 text-[#c7afa8]/50'}">
+                            ${fmt(item.cost)}
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            } else if (activeTab === 'intimacy') {
+                bulkRow.classList.add('hidden');
+
+                const info = document.createElement('div');
+                info.className = 'rounded-xl p-3 bg-[#170b0f]/80 border border-[#d4a359]/25 text-xs text-[#c7afa8]';
+                info.innerHTML = `Каждая свободная искра близости даёт <span class="text-[#e6be7d] font-bold">+10%</span> к теплу. Таланты ниже сохраняются после всех разрядок.`;
+                list.appendChild(info);
+
+                INTIMACY_PERKS.forEach(perk => {
+                    const lvl = state.intimacy[perk.id] || 0;
+                    const maxed = lvl >= perk.max;
+                    const cost = Math.floor(perk.baseCost * Math.pow(perk.mult, lvl));
+                    const ok = !maxed && state.sparks >= cost;
+
+                    const card = document.createElement('div');
+                    card.className = `shop-item-card rounded-xl p-3 flex items-center justify-between gap-3 ${maxed ? 'opacity-80' : (ok ? 'cursor-pointer' : 'is-locked')}`;
+                    if (!maxed && ok) card.onclick = () => purchaseIntimacy(perk.id);
+                    card.innerHTML = `
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-[#e6be7d] truncate">${perk.name}</span>
+                                <span class="text-[11px] text-[#c7afa8] tabular-nums shrink-0">${lvl}/${perk.max}</span>
+                            </div>
+                            <p class="text-xs text-[#f5ebe6]/85 line-clamp-2 mt-0.5">${perk.desc}</p>
+                        </div>
+                        <div class="px-3 py-2 rounded-lg text-xs font-extrabold tabular-nums shrink-0 ${maxed ? 'bg-white/10 text-[#e6be7d]' : (ok ? 'bg-[#d4a359] text-[#170b0f]' : 'bg-white/5 text-[#c7afa8]/50')}">
+                            ${maxed ? 'Макс.' : `${cost} искр`}
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            }
+        }
+
+        // Переключатели вкладок и кратности
+        document.querySelectorAll('.nav-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(b => {
+                    b.classList.remove('bg-[#8f2d47]', 'text-[#fff5f7]');
+                    b.classList.add('text-[#c7afa8]');
+                    if (b.dataset.tab === 'intimacy') b.classList.add('text-[#e6be7d]');
+                });
+                btn.classList.remove('text-[#c7afa8]', 'text-[#e6be7d]');
+                btn.classList.add('bg-[#8f2d47]', 'text-[#fff5f7]');
+                activeTab = btn.dataset.tab;
+                renderActiveTab();
+            });
+        });
+
+        document.querySelectorAll('.bulk-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.bulk-btn').forEach(b => {
+                    b.classList.remove('bg-[#d4a359]', 'text-[#170b0f]');
+                    b.classList.add('text-[#c7afa8]');
+                });
+                btn.classList.remove('text-[#c7afa8]');
+                btn.classList.add('bg-[#d4a359]', 'text-[#170b0f]');
+                const v = btn.dataset.bulk;
+                bulkMode = v === 'max' ? 'max' : parseInt(v, 10);
+                renderActiveTab();
+            });
+        });
+
+        // =========================================================================
+        // 7. ДНЕВНИК, 50 ТРОФЕЕВ, МОДАЛКИ И СОХРАНЕНИЯ
+        // =========================================================================
+        function notify(title, body) {
+            const stack = document.getElementById('toastStack');
+            const box = document.createElement('div');
+            box.className = 'boudoir-surface rounded-xl px-3.5 py-2.5 border border-[#d4a359]/40 pointer-events-auto';
+            box.innerHTML = `
+                <div class="text-xs font-extrabold text-[#e6be7d] truncate">${title}</div>
+                <div class="text-xs text-[#f5ebe6]/90 line-clamp-2 mt-0.5">${body}</div>
+            `;
+            stack.appendChild(box);
+            setTimeout(() => {
+                box.style.opacity = '0';
+                box.style.transition = 'opacity 250ms ease';
+                setTimeout(() => box.remove(), 260);
+            }, 3800);
+        }
+
+        function evaluateAchievements() {
+            let added = false;
+            ACHIEVEMENTS.forEach(ach => {
+                if (!state.achievements[ach.id] && ach.fn(state)) {
+                    state.achievements[ach.id] = Date.now();
+                    added = true;
+                    notify(`Трофей: ${ach.name}`, `${ach.desc} (+1.5% к теплу)`);
+                }
+            });
+            if (added) syncCounters();
+        }
+
+        function syncCounters() {
+            const achCount = Object.keys(state.achievements).length;
+            const diaryCount = getUnlockedDiaryCount();
+            document.getElementById('achCounter').textContent = `${achCount}/50`;
+            document.getElementById('achTotalBonus').textContent = `+${(achCount * 1.5).toFixed(1)}%`;
+            document.getElementById('diaryCounter').textContent = `${diaryCount}/10`;
+        }
+
+        function renderDiaryModal() {
+            const wrap = document.getElementById('diaryList');
+            wrap.innerHTML = '';
+            DIARY_SCENES.forEach(sc => {
+                const open = state.totalPleasure >= sc.unlockPleasure;
+                const card = document.createElement('div');
+                card.className = `rounded-xl p-3.5 border ${open ? 'bg-[#321923]/75 border-[#d4a359]/30' : 'bg-[#150a0e]/70 border-white/5 opacity-60'}`;
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                        <h3 class="font-editorial text-lg font-bold ${open ? 'text-[#f5ebe6]' : 'text-[#c7afa8]'}">${sc.title}</h3>
+                        <span class="text-[11px] font-semibold tabular-nums shrink-0 ${open ? 'text-[#e6be7d]' : 'text-[#c7afa8]'}">
+                            ${open ? sc.moodNote : `Нужно ${fmt(sc.unlockPleasure)} тепла`}
+                        </span>
+                    </div>
+                    <p class="text-xs leading-relaxed ${open ? 'text-[#f5ebe6]/90 italic font-editorial text-[15px]' : 'text-[#c7afa8]/60'}">
+                        ${open ? `«${sc.text}»` : 'Эта глава откроется, когда суммарное тепло дойдёт до указанного порога.'}
+                    </p>
+                `;
+                wrap.appendChild(card);
+            });
+        }
+
+        function renderAchModal() {
+            const grid = document.getElementById('achGrid');
+            grid.innerHTML = '';
+            const items = ACHIEVEMENTS.filter(a => {
+                const done = Boolean(state.achievements[a.id]);
+                if (achFilterMode === 'unlocked') return done;
+                if (achFilterMode === 'locked') return !done;
+                return true;
+            });
+
+            items.forEach(a => {
+                const done = Boolean(state.achievements[a.id]);
+                const card = document.createElement('div');
+                card.className = `rounded-xl p-3 border min-h-[76px] ${done ? 'bg-[#351a25]/85 border-[#d4a359]/35' : 'bg-[#150a0e]/65 border-white/5 opacity-55'}`;
+                card.innerHTML = `
+                    <div class="text-xs font-extrabold truncate ${done ? 'text-[#e6be7d]' : 'text-[#c7afa8]'}">${a.name}</div>
+                    <p class="text-[11px] text-[#f5ebe6]/80 line-clamp-2 mt-1">${a.desc}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        document.querySelectorAll('.ach-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.ach-filter').forEach(b => {
+                    b.classList.remove('bg-[#8f2d47]', 'text-white');
+                    b.classList.add('bg-white/5', 'text-[#c7afa8]');
+                });
+                btn.classList.remove('bg-white/5', 'text-[#c7afa8]');
+                btn.classList.add('bg-[#8f2d47]', 'text-white');
+                achFilterMode = btn.dataset.achfilter;
+                renderAchModal();
+            });
+        });
+
+        function renderSaveModal() {
+            const { chance, mult } = getCritConfig();
+            const rows = [
+                ['Всего тепла', fmt(state.totalPleasure)],
+                ['Всего касаний', fmt(state.totalTaps)],
+                ['Ярких всплесков', `${fmt(state.totalCrits)} (${Math.round(chance * 100)}% · x${mult.toFixed(1)})`],
+                ['Разрядок', state.ascentCount],
+                ['Одышек', state.windedCount],
+                ['Капризов выполнено', state.cravingsDone],
+                ['Общий множитель', `x${getGlobalMult().toFixed(2)}`],
+                ['Время в игре', `${Math.floor(state.playSeconds / 60)} мин ${Math.floor(state.playSeconds % 60)} с`]
+            ];
+            document.getElementById('dossierStats').innerHTML = rows.map(([k, v]) => `
+                <div class="bg-[#150a0e]/85 border border-[var(--border-hairline)] rounded-xl p-2.5">
+                    <div class="text-[10px] uppercase text-[#c7afa8]">${k}</div>
+                    <div class="text-xs font-extrabold text-[#f5ebe6] tabular-nums mt-0.5">${v}</div>
+                </div>
+            `).join('');
+        }
+
+        function openModal(id) {
+            if (id === 'diaryModal') renderDiaryModal();
+            if (id === 'achModal') renderAchModal();
+            if (id === 'saveModal') renderSaveModal();
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        document.getElementById('openDiaryBtn').onclick = () => openModal('diaryModal');
+        document.getElementById('openAchBtn').onclick = () => openModal('achModal');
+        document.getElementById('openSaveBtn').onclick = () => openModal('saveModal');
+
+        document.getElementById('toggleSoundBtn').onclick = () => {
+            warmSound.active = !warmSound.active;
+            document.getElementById('soundStatusLabel').textContent = warmSound.active ? 'Звук: да' : 'Звук: нет';
+            if (warmSound.active) warmSound.chime();
+        };
+
+        function saveToStorage(showMsg) {
+            state.lastSeen = Date.now();
+            try {
+                localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+                if (showMsg) notify('Сохранено', 'Запись в досье обновлена.');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function loadFromStorage() {
+            try {
+                const raw = localStorage.getItem(SAVE_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                state = Object.assign(createInitialState(), parsed);
+
+                const elapsed = Math.min(28800, Math.max(0, (Date.now() - (state.lastSeen || Date.now())) / 1000));
+                const pps = getPps();
+                if (elapsed > 20 && pps > 0) {
+                    const offGain = pps * elapsed * 0.5;
+                    grantPleasure(offGain);
+                    notify('С возвращением', `Пока тебя не было, накопилось +${fmt(offGain)} тепла.`);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function exportCode() {
+            const code = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+            const box = document.getElementById('saveStringInput');
+            box.value = code;
+            box.select();
+            document.execCommand('copy');
+            notify('Код скопирован', 'Строка сохранения помещена в буфер обмена.');
+        }
+
+        function importCode() {
+            const box = document.getElementById('saveStringInput');
+            const code = box.value.trim();
+            if (!code) return;
+            try {
+                const jsonStr = decodeURIComponent(escape(atob(code)));
+                state = Object.assign(createInitialState(), JSON.parse(jsonStr));
+                saveToStorage(false);
+                syncCounters();
+                renderActiveTab();
+                syncHud();
+                notify('Загружено', 'Сохранение успешно восстановлено.');
+            } catch (err) {
+                notify('Ошибка', 'Не удалось прочитать строку сохранения.');
+            }
+        }
+
+        let wipeArmed = false;
+        function handleWipeClick() {
+            const btn = document.getElementById('wipeBtn');
+            if (!wipeArmed) {
+                wipeArmed = true;
+                btn.textContent = 'Нажми ещё раз для сброса';
+                setTimeout(() => {
+                    wipeArmed = false;
+                    btn.textContent = 'Сбросить всё';
+                }, 3500);
+                return;
+            }
+            localStorage.removeItem(SAVE_KEY);
+            state = createInitialState();
+            tension = 0;
+            windedSeconds = 0;
+            wipeArmed = false;
+            btn.textContent = 'Сбросить всё';
+            closeModal('saveModal');
+            syncCounters();
+            renderActiveTab();
+            syncHud();
+            notify('Сброшено', 'Начинаем вечер с чистого листа.');
+        }
+
+        // =========================================================================
+        // 8. ГЛАВНЫЙ ЦИКЛ И ОБНОВЛЕНИЕ ИНТЕРФЕЙСА
+        // =========================================================================
+        let prevTick = performance.now();
+        let catalogTimer = 0;
+        let achTimer = 0;
+
+        function describeTension() {
+            if (windedSeconds > 0) return `Одышка (${windedSeconds.toFixed(1)} с)`;
+            if (isInSweetSpot()) return 'Зона наслаждения · x1.6';
+            if (tension < 25) return 'Накал: спокойное дыхание';
+            if (tension < 55) return 'Накал: растёт тепло';
+            if (tension <= 82) return 'Накал: на грани';
+            return 'Накал: слишком горячо!';
+        }
+
+        function syncHud() {
+            const pps = getPps();
+            document.getElementById('uiPleasure').textContent = fmt(state.pleasure);
+            document.getElementById('uiPps').textContent = `${fmt(pps)}/с`;
+            document.getElementById('uiSparks').textContent = fmt(state.sparks);
+
+            document.getElementById('tensionTitle').textContent = describeTension();
+            document.getElementById('tensionValue').textContent = `${Math.round(tension)}%`;
+            document.getElementById('tensionFill').style.width = `${tension}%`;
+            document.getElementById('clickMultBadge').textContent = `Касание: +${fmt(getTapPower())}`;
+
+            const holdLvl = state.intimacy.ip2 || 0;
+            document.getElementById('holdStatusNote').textContent = holdLvl > 0
+                ? `Удерживай центр: автокасаний ${holdLvl * 3}/с`
+                : 'Коснись центра — или удерживай при открытом таланте';
+
+            const goal = getAscentGoal();
+            const pct = Math.min(100, (state.cyclePleasure / goal) * 100);
+            document.getElementById('ascentPercent').textContent = `${pct.toFixed(1)}%`;
+            document.getElementById('ascentBar').style.width = `${pct}%`;
+
+            const sparksReady = getPendingSparks();
+            const ascBtn = document.getElementById('ascentBtn');
+            const ascLabel = document.getElementById('ascentBtnLabel');
+            if (sparksReady > 0) {
+                ascBtn.disabled = false;
+                ascBtn.className = 'w-full h-10 px-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition flex items-center justify-center bg-[#d4a359] hover:bg-[#e5b86e] text-[#170b0f] cursor-pointer';
+                ascLabel.textContent = `Разрядка (+${fmt(sparksReady)} искр близости)`;
+            } else {
+                ascBtn.disabled = true;
+                ascBtn.className = 'w-full h-10 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center justify-center bg-[#28141c] text-[#c7afa8]/50 border border-white/5 cursor-not-allowed';
+                ascLabel.textContent = `Порог разрядки: ${fmt(goal)} тепла в цикле`;
+            }
+
+            // Карточка «Каприз момента»
+            document.getElementById('cravingText').textContent = craving.label;
+            document.getElementById('cravingTimer').textContent = craving.ready ? 'Готово' : `${Math.ceil(craving.timeLeft)} с`;
+            const cPct = Math.min(100, (craving.progress / craving.target) * 100);
+            document.getElementById('cravingBar').style.width = `${cPct}%`;
+            const claimBtn = document.getElementById('cravingClaimBtn');
+            if (craving.ready) {
+                claimBtn.classList.remove('hidden');
+            } else {
+                claimBtn.classList.add('hidden');
+            }
+
+            // Бейдж доступных связок
+            const availSyn = SYNERGY_ITEMS.filter(s => !state.synergies[s.id] && s.req() && state.pleasure >= s.cost).length;
+            const synBadge = document.getElementById('synBadge');
+            if (availSyn > 0) {
+                synBadge.textContent = availSyn;
+                synBadge.classList.remove('hidden');
+            } else {
+                synBadge.classList.add('hidden');
+            }
+        }
+
+        function tickLoop(now) {
+            const dt = Math.min(0.25, (now - prevTick) / 1000);
+            prevTick = now;
+
+            state.playSeconds += dt;
+
+            // Пассивный поток от игрушек
+            const pps = getPps();
+            if (pps > 0) {
+                grantPleasure(pps * dt);
+            }
+
+            // Удержание при открытом таланте ip2
+            const holdLvl = state.intimacy.ip2 || 0;
+            if (isPointerHeld && holdLvl > 0 && windedSeconds <= 0) {
+                holdCarry += dt * (holdLvl * 3);
+                while (holdCarry >= 1) {
+                    holdCarry -= 1;
+                    const r = touchPad.getBoundingClientRect();
+                    triggerTap(r.left + r.width / 2, r.top + r.height / 2, true);
+                }
+            }
+
+            // Одышка и остывание накала
+            const { cool } = getTensionRates();
+            if (windedSeconds > 0) {
+                windedSeconds = Math.max(0, windedSeconds - dt);
+                tension = (windedSeconds / 2.4) * 100;
+                if (windedSeconds === 0) {
+                    sculptSvg.classList.remove('sculpt-winded');
+                    tension = 0;
+                }
+            } else if (tension > 0 && now - lastTapTime > 550) {
+                tension = Math.max(0, tension - cool * dt);
+            }
+
+            // Обновление «Каприза момента»
+            if (!craving.ready) {
+                craving.timeLeft -= dt;
+                if (craving.type === 'sweetspot' && isInSweetSpot()) {
+                    craving.progress = Math.min(craving.target, craving.progress + dt);
+                    if (craving.progress >= craving.target) craving.ready = true;
+                } else if (craving.type === 'calm' && tension < 45 && windedSeconds <= 0) {
+                    craving.progress = Math.min(craving.target, craving.progress + dt);
+                    if (craving.progress >= craving.target) craving.ready = true;
+                }
+                if (!craving.ready && craving.timeLeft <= 0) {
+                    rollNextCraving();
+                }
+            }
+
+            catalogTimer += dt;
+            if (catalogTimer >= 0.45) {
+                catalogTimer = 0;
+                renderActiveTab();
+            }
+
+            achTimer += dt;
+            if (achTimer >= 1.0) {
+                achTimer = 0;
+                evaluateAchievements();
+                syncCounters();
+            }
+
+            syncHud();
+            requestAnimationFrame(tickLoop);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
+            syncCounters();
+            renderActiveTab();
+            syncHud();
+            setInterval(() => saveToStorage(false), 6000);
+            requestAnimationFrame(tickLoop);
+        });
+    </script>
+</body>
+</html>
